@@ -1,0 +1,4 @@
+moomLet x = "Hi"
+moomPrintNl("Before change: ", x)
+x = "Hi :D"
+moomPrintNl("After change: ", x)

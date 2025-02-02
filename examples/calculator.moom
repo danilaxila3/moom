@@ -1,0 +1,16 @@
+moomLet x = 0
+moomLet y = 0
+
+moomPrint("Enter x: ")
+moomInput(x)
+moomPrint("Enter y: ")
+moomInput(y)
+
+moomLet z = x
+moomLet w = x
+
+z += y
+w *= y
+
+moomPrintNl("x + y is ", z)
+moomPrintNl("x * y is ", w)
