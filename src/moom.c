@@ -73,10 +73,16 @@ int main(int argc, char *argv[]) {
       tokens_num++;
     }
 
-    if (strncmp(code_ptr, "+=", 2) == 0 || strncmp(code_ptr, "*=", 2) == 0) {
+    if (strchr("+-*/=", *code_ptr)) {
+      token_len = 0;
       strcpy(tokens[tokens_num][1], "OPERATOR");
-      strncpy(tokens[tokens_num][0], code_ptr, 2);
-      code_ptr += 2;
+
+      while (strchr("+-*/=", *code_ptr)) {
+        tokens[tokens_num][0][token_len] = *code_ptr;
+        token_len++;
+        code_ptr++;
+      }
+
       tokens_num++;
     }
 
@@ -96,6 +102,7 @@ int main(int argc, char *argv[]) {
     code_ptr++;
   }
 
+  // Uncomment to print all tokens
   /*for (int i = 0; i < tokens_num; i++) {*/
   /*  printf("%s %s\n", tokens[i][1], tokens[i][0]);*/
   /*}*/
@@ -104,6 +111,67 @@ int main(int argc, char *argv[]) {
   int variables_num = 0;
 
   int current_token = 0;
+
+  while (current_token != tokens_num) {
+    if (strcmp(tokens[current_token][1], "NUMBER") == 0) {
+      if (strcmp(tokens[current_token + 1][0], "+") == 0) {
+        sprintf(tokens[current_token][0], "%d",
+                atoi(tokens[current_token][0]) +
+                    atoi(tokens[current_token + 2][0]));
+
+        for (int i = current_token + 1; i < 64; i++) {
+          memcpy(tokens[i], tokens[i + 2], sizeof(tokens[0]));
+        }
+
+        tokens_num -= 2;
+      }
+
+      if (strcmp(tokens[current_token + 1][0], "-") == 0) {
+        sprintf(tokens[current_token][0], "%d",
+                atoi(tokens[current_token][0]) -
+                    atoi(tokens[current_token + 2][0]));
+
+        for (int i = current_token + 1; i < 64; i++) {
+          memcpy(tokens[i], tokens[i + 2], sizeof(tokens[0]));
+        }
+
+        tokens_num -= 2;
+      }
+
+      if (strcmp(tokens[current_token + 1][0], "*") == 0) {
+        sprintf(tokens[current_token][0], "%d",
+                atoi(tokens[current_token][0]) *
+                    atoi(tokens[current_token + 2][0]));
+
+        for (int i = current_token + 1; i < 64; i++) {
+          memcpy(tokens[i], tokens[i + 2], sizeof(tokens[0]));
+        }
+
+        tokens_num -= 2;
+      }
+
+      if (strcmp(tokens[current_token + 1][0], "/") == 0) {
+        sprintf(tokens[current_token][0], "%d",
+                atoi(tokens[current_token][0]) /
+                    atoi(tokens[current_token + 2][0]));
+
+        for (int i = current_token + 1; i < 64; i++) {
+          memcpy(tokens[i], tokens[i + 2], sizeof(tokens[0]));
+        }
+
+        tokens_num -= 2;
+      }
+    }
+
+    current_token++;
+  }
+
+  // Uncomment to print all tokens after processing arithmetic operations
+  /*for (int i = 0; i < tokens_num; i++) {*/
+  /*  printf("%s %s\n", tokens[i][1], tokens[i][0]);*/
+  /*}*/
+
+  current_token = 0;
 
   while (current_token != tokens_num) {
     if (strcmp(tokens[current_token][1], "STATEMENT") == 0 &&
@@ -124,7 +192,8 @@ int main(int argc, char *argv[]) {
         if (strcmp(tokens[current_token + 1][0], ",") == 0 ||
             strcmp(tokens[current_token + 1][0], ")") == 0) {
           if (strcmp(statement, "moomPrint") == 0) {
-            if (strcmp(tokens[current_token][1], "STRING") == 0) {
+            if (strcmp(tokens[current_token][1], "STRING") == 0 ||
+                strcmp(tokens[current_token][1], "NUMBER") == 0) {
               printf("%s", tokens[current_token][0]);
             }
 
@@ -138,7 +207,8 @@ int main(int argc, char *argv[]) {
           }
 
           if (strcmp(statement, "moomPrintNl") == 0) {
-            if (strcmp(tokens[current_token][1], "STRING") == 0) {
+            if (strcmp(tokens[current_token][1], "STRING") == 0 ||
+                strcmp(tokens[current_token][1], "NUMBER") == 0) {
               printf("%s", tokens[current_token][0]);
             }
 
@@ -171,7 +241,8 @@ int main(int argc, char *argv[]) {
         strcmp(tokens[current_token + 1][0], "=") == 0) {
       for (int i = 0; i < 64; i++) {
         if (strcmp(variables[i][0], tokens[current_token][0]) == 0) {
-          if (strcmp(tokens[current_token + 2][1], "NUMBER") == 0 || strcmp(tokens[current_token + 2][1], "STRING") == 0) {
+          if (strcmp(tokens[current_token + 2][1], "NUMBER") == 0 ||
+              strcmp(tokens[current_token + 2][1], "STRING") == 0) {
             strcpy(variables[i][1], tokens[current_token + 2][0]);
           }
 

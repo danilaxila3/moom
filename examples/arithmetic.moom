@@ -1,0 +1,4 @@
+moomPrintNl("67 + 2 is ", 67 + 2)
+moomPrintNl("67 - 2 is ", 67 - 2)
+moomPrintNl("67 * 2 is ", 67 * 2)
+moomPrintNl("67 / 2 is ", 67 / 2)
